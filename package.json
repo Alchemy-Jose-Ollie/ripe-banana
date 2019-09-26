@@ -8,7 +8,6 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "pretest": "npm run lint",
     "jest": "jest --runInBand",
     "test": "npm run jest -- --coverage",
     "test:watch": "npm run jest -- --watchAll",
