@@ -12,7 +12,7 @@ describe('reviewers api', () => {
   };
 
   function postReviewer(reviewer) {
-    return request 
+    return request
       .post('/api/reviewers')
       .send(reviewer)
       .expect(200)
@@ -37,6 +37,32 @@ describe('reviewers api', () => {
           .then(({ body }) => {
             expect(body).toEqual(reviewer);
           });
+      });
+  });
+
+  it('get a list of reviewers', () => {
+    const firstReviewer = {
+      name: 'Jose Ojeda',
+      company: 'Alchemy'
+    };
+
+    return Promise.all([
+      postReviewer(firstReviewer),
+      postReviewer({ name: 'Josb Ojeda', company: 'Alchemy' }),
+      postReviewer({ name: 'Josc Ojeda', company: 'Alchemy' })
+    ])
+      .then(() => {
+        return request.get('/api/reviewers')
+          .expect(200);
+      })
+      .then(({ body }) => {
+        expect(body.length).toBe(3);
+        expect(body[0]).toEqual({
+          _id: expect.any(String),
+          __v: 0,
+          name: firstReviewer.name,
+          company: firstReviewer.company
+        });
       });
   });
 
