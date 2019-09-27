@@ -66,4 +66,18 @@ describe('reviewers api', () => {
       });
   });
 
+  it('updates a reviewer', () => {
+    return postReviewer(reviewer)
+      .then(reviewer => {
+        reviewer.company = 'Alchemy Lab';
+        return request
+          .put(`/api/reviewers/${reviewer._id}`)
+          .send(reviewer)
+          .expect(200);
+      })
+      .then(({ body }) => {
+        expect(body.company).toBe('Alchemy Lab');
+      });
+  });
+
 });
