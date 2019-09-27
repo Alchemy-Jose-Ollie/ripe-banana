@@ -65,7 +65,13 @@ describe('studios api', () => {
         expect(body.length).toBe(3);
         expect(body[0]).toEqual({
           _id: expect.any(String),
-          name: firstStudio.name
+          __v: expect.any(Number),
+          name: firstStudio.name,
+          address: {
+            city: firstStudio.address.city,
+            state: firstStudio.address.state,
+            country: firstStudio.address.country
+          }
         });
       }); 
   });
