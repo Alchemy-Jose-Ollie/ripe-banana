@@ -37,6 +37,7 @@ describe('review api', () => {
 
   it('posts a review', () => {
     return postReview(review).then(review => {
+      console.log(review);
       expect(review).toMatchInlineSnapshot(
         {
           _id: expect.any(String),
@@ -63,9 +64,21 @@ describe('review api', () => {
         .then(({ body }) => {
           expect(body).toMatchInlineSnapshot(
             {
+              __v: 0,
               _id: expect.any(String),
-              reviewer: expect.any(String)
+              reviewer: expect.any(Object),
+              rating: 4,
+              review: 'This movie was kind of amazing'
             },
+            `
+            Object {
+              "__v": 0,
+              "_id": Any<String>,
+              "rating": 4,
+              "review": "This movie was kind of amazing",
+              "reviewer": Any<Object>,
+            }
+          `
           );
         });
     });
