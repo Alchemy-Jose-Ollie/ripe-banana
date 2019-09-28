@@ -83,4 +83,40 @@ describe('review api', () => {
         });
     });
   });
+
+  it('gets a list of reviews', () => {
+    const firstReviews = {
+      rating: 4,
+      review: 'This movie was kind of amazing'
+    };
+    return Promise.all([
+      postReview(firstReviews),
+      postReview({ rating: 4, review: 'This movie was kind of amazing' }),
+      postReview({ rating: 4, review: 'This movie was kind of amazing' })
+    ])
+      .then(() => {
+        return request.get('/api/reviews').expect(200);
+      })
+      .then(({ body }) => {
+        expect(body.length).toBe(3);
+        expect(body[0]).toMatchInlineSnapshot(
+          {
+            __v: 0,
+            _id: expect.any(String),
+            reviewer: expect.any(Object),
+            rating: 4,
+            review: 'This movie was kind of amazing'
+          },
+          `
+          Object {
+            "__v": 0,
+            "_id": Any<String>,
+            "rating": 4,
+            "review": "This movie was kind of amazing",
+            "reviewer": Any<Object>,
+          }
+        `
+        );
+      });
+  });
 });
