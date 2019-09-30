@@ -78,7 +78,7 @@ describe('review api', () => {
               "review": "This movie was kind of amazing",
               "reviewer": Any<Object>,
             }
-          `
+            `
           );
         });
     });
@@ -95,19 +95,21 @@ describe('review api', () => {
       postReview({ rating: 4, review: 'This movie was kind of amazing' })
     ])
       .then(() => {
-        return request.get('/api/reviews').expect(200);
-      })
-      .then(({ body }) => {
-        expect(body.length).toBe(3);
-        expect(body[0]).toMatchInlineSnapshot(
-          {
-            __v: 0,
-            _id: expect.any(String),
-            reviewer: expect.any(Object),
-            rating: 4,
-            review: 'This movie was kind of amazing'
-          },
-          `
+        return request.get('/api/reviews').expect(200)
+     
+          .then(({ body }) => {
+            console.log('****TEST 1', body);
+        
+            expect(body.length).toBe(3);
+            expect(body[0]).toMatchInlineSnapshot(
+              {
+                __v: 0,
+                _id: expect.any(String),
+                reviewer: expect.any(Object),
+                rating: 4,
+                review: 'This movie was kind of amazing'
+              },
+              `
           Object {
             "__v": 0,
             "_id": Any<String>,
@@ -116,7 +118,8 @@ describe('review api', () => {
             "reviewer": Any<Object>,
           }
         `
-        );
+            );
+          });
       });
   });
 });
