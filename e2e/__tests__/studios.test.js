@@ -81,4 +81,10 @@ describe('studios api', () => {
       return request.delete(`/api/studios/${studio._id}`).expect(200);
     });
   });
+
+  it('throws an error if film exists', () => {
+    return Promise.all([
+
+    ])
+  }); 
 });

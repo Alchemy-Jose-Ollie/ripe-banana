@@ -104,7 +104,6 @@ describe('film api', () => {
         .get(`/api/films/${savedFilm._id}`)
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
           expect(body).toMatchInlineSnapshot(
             {
               _id: expect.any(String),
