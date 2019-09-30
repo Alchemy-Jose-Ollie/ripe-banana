@@ -5,9 +5,19 @@ describe('actors api', () => {
   beforeEach(() => {
     return Promise.all([
       db.dropCollection('actors'),
-      db.dropCollection('films')
+      db.dropCollection('films'),
+      db.dropCollection('studios'),
     ]);
   });
+
+  const studio = {
+    name: 'Studio A',
+    address: {
+      city: 'Portland',
+      state: 'OR',
+      country: 'US'
+    }
+  };
 
   const actor = {
     name: 'Jonny Karate',
@@ -25,7 +35,6 @@ describe('actors api', () => {
     ]
   };
 
-
   function postActor(actor) {
     return request
       .post('/api/actors')
@@ -34,13 +43,19 @@ describe('actors api', () => {
       .then(({ body }) => body);
   }
 
-  function postFilm(film) {
+  function postStudio(studio) {
     return request
-      .post('/api/actors')
-      .send(actor)
+      .post('/api/studios')
+      .send(studio)
       .expect(200)
-      .then(({ body }) => {
-        film.actor = body._id;
+      .then(({ body }) => body);
+  }
+
+  function postFilm() {
+    return Promise.all([postActor(actor), postStudio(studio)])
+      .then(([actor, studio]) => {
+        film.actor = actor._id;
+        film.studio = studio._id;
         return request
           .post('/api/films')
           .send(film)
@@ -86,7 +101,7 @@ describe('actors api', () => {
         return request.get('/api/actors')
           .expect(200);
       })
-      .then(({ body }) => {      
+      .then(({ body }) => {
         expect(body.length).toBe(3);
         expect(body[0]).toEqual({
           _id: expect.any(String),
@@ -105,14 +120,9 @@ describe('actors api', () => {
   });
 
   it('throws an error if actor is in film', () => {
-    return Promise.all([
-      postActor(actor),
-      postFilm(film)
-    ])
+    return postFilm(film)
       .then(() => {
-        expect(() => {
-          return request.delete(`/api/actors/${actor._id}`).expect(400);
-        });
+        return request.delete(`/api/actors/${actor._id}`).expect(400);
       });
   });
 });
