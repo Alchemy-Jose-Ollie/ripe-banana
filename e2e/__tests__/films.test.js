@@ -97,4 +97,107 @@ describe('film api', () => {
       );
     });
   });
+
+  it('gets a film by id', () => {
+    return postFilm(film).then(savedFilm => {
+      return request
+        .get(`/api/films/${savedFilm._id}`)
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body).toMatchInlineSnapshot(
+            {
+              _id: expect.any(String),
+              title: 'Film A',
+              studio: expect.any(Object),
+              released: 2019,
+              cast: [
+                {
+                  _id: expect.any(String),
+                  role: 'Hero'
+                }
+              ]
+            },
+
+            `
+            Object {
+              "__v": 0,
+              "_id": Any<String>,
+              "cast": Array [
+                Object {
+                  "_id": Any<String>,
+                  "role": "Hero",
+                },
+              ],
+              "released": 2019,
+              "studio": Any<Object>,
+              "title": "Film A",
+            }
+          `
+          );
+        });
+    });
+  });
+
+  it('gets all films', () => {
+    const firstFilm = {
+      title: 'Film A',
+      released: 2019,
+      cast: [
+        {
+          role: 'Hero'
+        }
+      ]
+    };
+    return Promise.all([
+      postFilm(firstFilm),
+      postFilm({
+        title: 'Second Film',
+        released: 2019,
+        cast: [{ role: 'Hero' }]
+      }),
+      postFilm({
+        title: 'Third Film',
+        released: 2019,
+        cast: [{ role: 'Hero' }]
+      })
+    ]).then(() => {
+      return request
+        .get('/api/films')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.length).toBe(3);
+          expect(body[0]).toMatchInlineSnapshot(
+            {
+              _id: expect.any(String),
+              title: 'Film A',
+              studio: expect.any(Object),
+              released: 2019,
+              cast: [
+                {
+                  _id: expect.any(String),
+                  role: 'Hero'
+                }
+              ]
+            },
+
+            `
+            Object {
+              "__v": 0,
+              "_id": Any<String>,
+              "cast": Array [
+                Object {
+                  "_id": Any<String>,
+                  "role": "Hero",
+                },
+              ],
+              "released": 2019,
+              "studio": Any<Object>,
+              "title": "Film A",
+            }
+          `
+          );
+        });
+    });
+  });
 });
