@@ -28,9 +28,11 @@ describe('film api', () => {
   const film = {
     title: 'Film A',
     released: 2019,
-    cast: [{
-      role: 'Hero'
-    }]
+    cast: [
+      {
+        role: 'Hero'
+      }
+    ]
   };
 
   function postActor(actor) {
@@ -50,20 +52,49 @@ describe('film api', () => {
   }
 
   function postFilm() {
-    return Promise.all([
-      postActor(actor),
-      postStudio(studio)
-    ])
+    return Promise.all([postActor(actor), postStudio(studio)])
       .then(([actor, studio]) => {
+        film.actor = actor._id;
         film.studio = studio._id;
-
-        
-        console.log(actor, studio);
-      });
+        return request
+          .post('/api/films')
+          .send(film)
+          .expect(200);
+      })
+      .then(({ body }) => body);
   }
 
-  it('nothing', async() => {
-    await postFilm(film);
-
+  it('posts a film', () => {
+    return postFilm(film).then(film => {
+      expect(film).toMatchInlineSnapshot(
+        {
+          _id: expect.any(String),
+          title: 'Film A',
+          studio: expect.any(String),
+          released: 2019,
+          cast: [
+            {
+              _id: expect.any(String),
+              role: 'Hero'
+            }
+          ]
+        },
+        `
+        Object {
+          "__v": 0,
+          "_id": Any<String>,
+          "cast": Array [
+            Object {
+              "_id": Any<String>,
+              "role": "Hero",
+            },
+          ],
+          "released": 2019,
+          "studio": Any<String>,
+          "title": "Film A",
+        }
+      `
+      );
+    });
   });
 });
