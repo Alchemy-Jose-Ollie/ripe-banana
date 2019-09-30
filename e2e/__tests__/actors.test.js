@@ -51,11 +51,14 @@ describe('actors api', () => {
       .then(({ body }) => body);
   }
 
-  function postFilm() {
+  function postFilm(film) {
     return Promise.all([postActor(actor), postStudio(studio)])
       .then(([actor, studio]) => {
-        film.actor = actor._id;
+        film.cast[0].actor = actor._id;
+        film.cast[0].role = 'Hero';
         film.studio = studio._id;
+
+        
         return request
           .post('/api/films')
           .send(film)
@@ -121,8 +124,10 @@ describe('actors api', () => {
 
   it('throws an error if actor is in film', () => {
     return postFilm(film)
-      .then(() => {
-        return request.delete(`/api/actors/${actor._id}`).expect(400);
+      .then(film => {
+        console.log(film);
+        
+        return request.delete(`/api/actors/${film.cast[0].actor}`).expect(400);
       });
   });
 });
