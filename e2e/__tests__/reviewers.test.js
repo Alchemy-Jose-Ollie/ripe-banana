@@ -57,7 +57,6 @@ describe('reviewers api', () => {
       })
       .then(({ body }) => {
         expect(body.length).toBe(3);
-        console.log(body[0]);
         
         expect(body[0]).toEqual({
           _id: expect.any(String),

@@ -37,7 +37,6 @@ describe('review api', () => {
 
   it('posts a review', () => {
     return postReview(review).then(review => {
-      console.log(review);
       expect(review).toMatchInlineSnapshot(
         {
           _id: expect.any(String),
@@ -97,9 +96,7 @@ describe('review api', () => {
       .then(() => {
         return request.get('/api/reviews').expect(200)
      
-          .then(({ body }) => {
-            console.log('****TEST 1', body);
-        
+          .then(({ body }) => {      
             expect(body.length).toBe(3);
             expect(body[0]).toMatchInlineSnapshot(
               {

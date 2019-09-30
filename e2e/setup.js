@@ -1,5 +1,5 @@
 const connect = require('../lib/connect');
-const TEST_DB_URL = 'mongodb://localhost:27017/VideoGame';
+const TEST_DB_URL = 'mongodb://localhost:27017/banana';
 const mongoose = require('mongoose');
 
 beforeAll(() => {
