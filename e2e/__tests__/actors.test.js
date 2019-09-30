@@ -3,7 +3,10 @@ const db = require('../db');
 
 describe('actors api', () => {
   beforeEach(() => {
-    return db.dropCollection('actors');
+    return Promise.all([
+      db.dropCollection('actors'),
+      db.dropCollection('films')
+    ]);
   });
 
   const actor = {
@@ -12,11 +15,37 @@ describe('actors api', () => {
     pob: 'Oregon'
   };
 
+  const film = {
+    title: 'Film A',
+    released: 2019,
+    cast: [
+      {
+        role: 'Hero'
+      }
+    ]
+  };
+
+
   function postActor(actor) {
     return request
       .post('/api/actors')
       .send(actor)
       .expect(200)
+      .then(({ body }) => body);
+  }
+
+  function postFilm(film) {
+    return request
+      .post('/api/actors')
+      .send(actor)
+      .expect(200)
+      .then(({ body }) => {
+        film.actor = body._id;
+        return request
+          .post('/api/films')
+          .send(film)
+          .expect(200);
+      })
       .then(({ body }) => body);
   }
 
@@ -71,7 +100,19 @@ describe('actors api', () => {
 
   it('deletes an actor', () => {
     return postActor(actor).then(actor => {
-      return request.delete(`/api/actors/${actor._id}`);
+      return request.delete(`/api/actors/${actor._id}`).expect(200);
     });
+  });
+
+  it('throws an error if actor is in film', () => {
+    return Promise.all([
+      postActor(actor),
+      postFilm(film)
+    ])
+      .then(() => {
+        expect(() => {
+          return request.delete(`/api/actors/${actor._id}`).expect(400);
+        });
+      });
   });
 });
