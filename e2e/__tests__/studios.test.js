@@ -75,4 +75,10 @@ describe('studios api', () => {
         });
       }); 
   });
+
+  it('deletes a studio', () => {
+    return postStudio(studio).then(studio => {
+      return request.delete(`/api/studios/${studio._id}`).expect(200);
+    });
+  });
 });

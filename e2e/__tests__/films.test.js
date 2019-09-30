@@ -200,4 +200,10 @@ describe('film api', () => {
         });
     });
   });
+
+  it('deletes a film', () => {
+    return postFilm(film).then(film => {
+      return request.delete(`/api/films/${film._id}`);
+    });
+  });
 });

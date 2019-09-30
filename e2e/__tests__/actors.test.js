@@ -68,4 +68,10 @@ describe('actors api', () => {
         });
       });
   });
+
+  it('deletes an actor', () => {
+    return postActor(actor).then(actor => {
+      return request.delete(`/api/actors/${actor._id}`);
+    });
+  });
 });
