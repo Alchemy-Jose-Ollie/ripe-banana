@@ -3,7 +3,10 @@ const db = require('../db');
 
 describe('studios api', () => {
   beforeEach(() => {
-    return db.dropCollection('studios');
+    return Promise.all([
+      db.dropCollection('studios'),
+      db.dropCollection('films')
+    ]);
   });
 
   const studio = {
@@ -15,11 +18,37 @@ describe('studios api', () => {
     }
   };
 
+  const film = {
+    title: 'Film A',
+    released: 2019,
+    cast: [
+      {
+        role: 'Hero'
+      }
+    ]
+  };
+
+
   function postStudio(studio) {
     return request
       .post('/api/studios')
       .send(studio)
       .expect(200)
+      .then(({ body }) => body);
+  }
+
+  function postFilm(film) {
+    return request
+      .post('/api/studios')
+      .send(studio)
+      .expect(200)
+      .then(({ body }) => {
+        film.studio = body._id;
+        return request
+          .post('/api/films')
+          .send(film)
+          .expect(200);
+      })
       .then(({ body }) => body);
   }
 
@@ -73,7 +102,7 @@ describe('studios api', () => {
             country: firstStudio.address.country
           }
         });
-      }); 
+      });
   });
 
   it('deletes a studio', () => {
@@ -84,7 +113,13 @@ describe('studios api', () => {
 
   it('throws an error if film exists', () => {
     return Promise.all([
-
+      postStudio(studio),
+      postFilm(film)
     ])
-  }); 
+      .then(() => {
+        expect(() => {
+          return request.delete(`/api/studios/${studio._id}`).expect(400);
+        });
+      });
+  });
 });
